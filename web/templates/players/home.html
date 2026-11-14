@@ -1,0 +1,3 @@
+{% extends "players/base.html" %}{% block title %}Bosh sahifa · Mafia{% endblock %}{% block content %}
+<section class="hero"><p class="eyebrow">STRATEGIYA · JAMOA · SIR</p><h1>Mafia olamiga xush kelibsiz</h1><p>Do‘stlaringiz bilan Telegram guruhida yoki sayt orqali o‘ynang. Profilingiz, XP va yutuqlaringiz bir joyda.</p><a class="button" href="/rooms/">O‘yinga kirish</a></section>
+<section class="panel"><h2>Top o‘yinchilar</h2>{% for p in top %}<div class="player-row"><span>{{ forloop.counter }}. {{ p.user.username }}</span><b>{{ p.wins }} g‘alaba · {{ p.xp }} XP</b></div>{% empty %}<p>Hozircha reyting bo‘sh.</p>{% endfor %}<a href="/leaderboard/">To‘liq reyting →</a></section>{% endblock %}
