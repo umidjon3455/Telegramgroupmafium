@@ -57,3 +57,28 @@ Avval har bir o‘yinchi botga shaxsiy chatda `/start` yuborishi kerak. So‘ng 
 
 ## Hozirgi cheklov
 Faol o‘yin holati hozircha bot xotirasida saqlanadi. Bot qayta ishga tushsa, davom etayotgan o‘yin to‘xtaydi; profil va statistika SQLite'da qoladi. Bu boshlang‘ich versiya bo‘lib, real guruhda to‘liq sinovdan o‘tkazish va keyingi takomillashtirish talab qilinadi.
+
+
+## Django web platform (development)
+
+A Django website scaffold is available in `web/`:
+- Registration and login
+- Player profile with games, wins, losses, XP and level
+- Leaderboard
+- Web game rooms, joining and role assignment (minimum 5 players)
+- Django admin for profiles and rooms
+- Protected endpoint `/api/telegram-sync/` for future bot-to-site statistics synchronization
+
+### Run the website (Windows PowerShell)
+```powershell
+cd web
+py -3.11 -m venv .venv
+.\\.venv\\Scripts\\Activate.ps1
+pip install -r requirements.txt
+Copy-Item .env.example .env
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
+
+Open `http://127.0.0.1:8000/`. Configure a strong `DJANGO_SECRET_KEY` and a private `TELEGRAM_SYNC_KEY` before deployment. The website room flow currently provides a lobby and role assignment; full web-based night/day turns and live synchronization with the Telegram bot are follow-up development tasks. Do not use the development defaults on a public server.

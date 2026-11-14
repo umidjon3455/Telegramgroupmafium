@@ -1,0 +1,1 @@
+{% extends "players/base.html" %}{% block content %}<section class="panel"><h1>🏆 O‘yinchilar reytingi</h1>{% for p in players %}<div class="player-row"><span>{{ forloop.counter }}. {{ p.user.username }}</span><b>{{ p.wins }} g‘alaba · {{ p.xp }} XP · {{ p.level }}-daraja</b></div>{% empty %}<p>Hozircha o‘yinchi yo‘q.</p>{% endfor %}</section>{% endblock %}
