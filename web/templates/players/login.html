@@ -1,0 +1,1 @@
+{% extends "players/base.html" %}{% block content %}<section class="form-card"><h1>Kirish</h1><form method="post">{% csrf_token %}<label>Login<input name="username" required></label><label>Parol<input type="password" name="password" required></label><button class="button">Kirish</button></form></section>{% endblock %}
