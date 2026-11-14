@@ -84,6 +84,32 @@ python manage.py runserver
 Sayt: http://127.0.0.1:8000/  
 Admin: http://127.0.0.1:8000/admin/
 
+## O‘rnatishdan keyingi tekshiruv
+
+Bot va Django web qismi alohida virtual muhitlarda ishlatilishi tavsiya etiladi. Yuqoridagi buyruqlarni tegishli papkada bajaring.
+
+Django papkasida quyidagi buyruqlarni ketma-ket bajaring:
+
+```powershell
+python manage.py check
+python manage.py makemigrations --check --dry-run
+python manage.py migrate
+python manage.py test
+```
+
+- `check` — Django konfiguratsiyasini tekshiradi.
+- `makemigrations --check --dry-run` — model o‘zgarishlari uchun migratsiya yetishmayotganini tekshiradi, fayl yaratmaydi.
+- `migrate` — ma’lumotlar bazasi jadvallarini yaratadi yoki yangilaydi.
+- `test` — mavjud Django testlarini ishga tushiradi.
+
+Bot papkasining ildizida sintaksisni tekshirish uchun:
+
+```powershell
+python -m compileall -q bot
+```
+
+Botni ishga tushirishdan oldin ildizdagi `.env` faylida haqiqiy `BOT_TOKEN` bo‘lishi shart. Django uchun esa `web/.env` ichida `DJANGO_SECRET_KEY` bo‘lishi kerak. Bu maxfiy qiymatlarni GitHub'ga yubormang.
+
 ## Hozirgi cheklovlar
 
 - Botdagi faol o‘yin holati xotirada saqlanadi. Bot qayta ishga tushsa, davom etayotgan o‘yin tiklanmaydi.
