@@ -1,2 +1,59 @@
 # Telegramgroupmafium
-A feature-rich Telegram Mafia game bot built with Python 3.11 and aiogram 3, featuring player profiles, roles, voting, achievements, XP, and leaderboards.
+
+Telegram guruhlari uchun Mafia o‘yini boti. Python 3.11, aiogram 3 va SQLite asosida.
+
+## Imkoniyatlar
+- Guruhda o‘yin xonasi ochish: `/game`
+- Qatnashish: `/join`, chiqish: `/leave`
+- Boshlash: `/startgame` (faqat xona egasi)
+- Mafia, Doktor, Komissar va Aholi rollari
+- Tungi harakatlar shaxsiy chatdagi tugmalar orqali
+- Kunduzgi ovoz berish guruhda
+- Profil, statistika, reyting, XP, darajalar va yutuqlar
+- O‘yin natijalari SQLite bazasiga yoziladi
+
+## Talablar
+- Python 3.11
+- Telegram bot tokeni
+- Bot guruhda xabar yuborish va callback tugmalariga javob berish huquqiga ega bo‘lishi kerak.
+
+## O‘rnatish (Windows PowerShell)
+```powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+Copy-Item .env.example .env
+```
+
+`.env` faylini ochib, `BOT_TOKEN` qiymatiga BotFather bergan tokenni kiriting. Tokenni hech qachon GitHub'ga yuklamang.
+
+## Ishga tushirish
+```powershell
+python -m bot.main
+```
+
+Avval har bir o‘yinchi botga shaxsiy chatda `/start` yuborishi kerak. So‘ng botni guruhga qo‘shing.
+
+## O‘yin tartibi
+1. Guruhda `/game` yuboring.
+2. O‘yinchilar `/join` bilan qo‘shiladi (kamida 5 kishi).
+3. Xona egasi `/startgame` yuboradi.
+4. Rollar shaxsiy chatga jo‘natiladi.
+5. Kechasi maxsus rollar shaxsiy tugmalardan foydalanadi.
+6. Kunduzi guruhdagi ovoz berish tugmalaridan foydalaniladi.
+7. G‘olib aniqlanganda natija va statistika saqlanadi.
+
+## Buyruqlar
+- `/start` — botni ishga tushirish
+- `/help` — yordam
+- `/game` — guruhda xona ochish
+- `/join` — o‘yinga qo‘shilish
+- `/leave` — kutish xonasidan chiqish
+- `/startgame` — o‘yinni boshlash
+- `/cancelgame` — kutish xonasini bekor qilish
+- `/profile` — shaxsiy statistika
+- `/top` — reyting
+
+## Hozirgi cheklov
+Faol o‘yin holati hozircha bot xotirasida saqlanadi. Bot qayta ishga tushsa, davom etayotgan o‘yin to‘xtaydi; profil va statistika SQLite'da qoladi. Bu boshlang‘ich versiya bo‘lib, real guruhda to‘liq sinovdan o‘tkazish va keyingi takomillashtirish talab qilinadi.
