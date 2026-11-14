@@ -1,0 +1,5 @@
+<!doctype html>
+<html lang="uz"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Telegramgroupmafium{% endblock %}</title><link rel="stylesheet" href="/static/players/style.css"></head>
+<body><header><a class="brand" href="/">🎭 Telegramgroupmafium</a><nav><a href="/leaderboard/">Reyting</a><a href="/rooms/">O‘yin xonalari</a>{% if user.is_authenticated %}<a href="/profile/">Profil</a><a href="/logout/">Chiqish</a>{% else %}<a href="/login/">Kirish</a><a href="/register/">Ro‘yxatdan o‘tish</a>{% endif %}</nav></header>
+<main>{% if messages %}{% for message in messages %}<p class="notice">{{ message }}</p>{% endfor %}{% endif %}{% block content %}{% endblock %}</main><footer>Telegramgroupmafium · Django + Telegram</footer></body></html>
