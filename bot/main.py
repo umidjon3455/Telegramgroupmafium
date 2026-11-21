@@ -62,7 +62,7 @@ async def start_night(chat_id, game):
             await bot.send_message(uid, prompt, reply_markup=night_keyboard(game, role))
         except (TelegramForbiddenError, TelegramBadRequest):
             await bot.send_message(chat_id,
-                f"⚠️ {game.players[uid]['name']} bot bilan shaxsiy chatni ochmagan. U botga /start yuborishi kerak.")
+                f"⚠️ {escape_html(game.players[uid]['name'])} bot bilan shaxsiy chatni ochmagan. U botga /start yuborishi kerak.")
 
 async def resolve_night(chat_id, game):
     required = set(game.role_ids("mafia") + game.role_ids("doctor") + game.role_ids("detective"))
@@ -71,7 +71,7 @@ async def resolve_night(chat_id, game):
     victim, _ = game.night_result()
     if victim:
         game.eliminate(victim)
-        await bot.send_message(chat_id, f"🌅 Tong otdi. Kechasi {game.players[victim]['name']} o‘yindan chiqdi.")
+        await bot.send_message(chat_id, f"🌅 Tong otdi. Kechasi {escape_html(game.players[victim]['name'])} o‘yindan chiqdi.")
     else:
         await bot.send_message(chat_id, "🌅 Tong otdi. Bu kecha hech kim o‘yindan chiqmadi.")
     winner = game.winner()
@@ -92,7 +92,7 @@ async def resolve_day(chat_id, game):
     if out:
         game.eliminate(out)
         await bot.send_message(chat_id,
-            f"🗳 Ovoz berish yakunlandi. {game.players[out]['name']} o‘yindan chiqarildi. Roli: {ROLE_NAMES[game.players[out]['role']]}.")
+            f"🗳 Ovoz berish yakunlandi. {escape_html(game.players[out]['name'])} o‘yindan chiqarildi. Roli: {ROLE_NAMES[game.players[out]['role']]}.")
     else:
         await bot.send_message(chat_id, "🗳 Ovozlar teng bo‘ldi. Hech kim chiqarilmadi.")
     winner = game.winner()
@@ -178,7 +178,7 @@ async def start_game(message: Message):
         try:
             await bot.send_message(uid, f"🎭 Sizning rolingiz: <b>{ROLE_NAMES[player['role']]}</b>", parse_mode="HTML")
         except (TelegramForbiddenError, TelegramBadRequest):
-            failed.append(player["name"])
+            failed.append(escape_html(player["name"]))
     if failed:
         games.pop(message.chat.id, None)
         await message.answer("Quyidagi o‘yinchilar botga shaxsiy /start yubormagan: " + ", ".join(failed) + ". Xona bekor qilindi; hamma /start yuborgach qayta urinib ko‘ring.")
