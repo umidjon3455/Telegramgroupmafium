@@ -1,6 +1,7 @@
 import asyncio
 import logging
 from aiogram import Bot, Dispatcher, F
+from .formatting import escape_html
 from aiogram.filters import Command, CommandStart
 from aiogram.types import Message, CallbackQuery
 from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError
@@ -25,7 +26,7 @@ ACHIEVEMENTS = [
 ]
 
 async def send_lobby(chat_id, game):
-    names = "\n".join(f"• {p['name']}" for p in game.players.values()) or "Hali hech kim yo‘q"
+    names = "\n".join(f"• {escape_html(p['name'])}" for p in game.players.values()) or "Hali hech kim yo‘q"
     await bot.send_message(chat_id,
         f"🎭 <b>Mafia xonasi ochildi!</b>\n\n👥 O‘yinchilar ({len(game.players)}):\n{names}\n\n"
         "Qo‘shilish: /join\nBoshlash: /startgame", parse_mode="HTML")
@@ -36,7 +37,7 @@ async def finish_game(chat_id, game, side):
     await record_game(game.players, winners)
     winner_text = "🕵️ Mafia jamoasi g‘alaba qozondi!" if side == "mafia" else "🏘 Tinch aholi g‘alaba qozondi!"
     details = "\n".join(
-        f"{'🟢' if uid in winners else '⚪'} {p['name']} — {ROLE_NAMES[p['role']]}"
+        f"{'🟢' if uid in winners else '⚪'} {escape_html(p['name'])} — {ROLE_NAMES[p['role']]}"
         for uid, p in game.players.items())
     await bot.send_message(chat_id, f"🏆 <b>O‘YIN TUGADI!</b>\n{winner_text}\n\n{details}", parse_mode="HTML")
     games.pop(chat_id, None)
@@ -61,7 +62,7 @@ async def start_night(chat_id, game):
             await bot.send_message(uid, prompt, reply_markup=night_keyboard(game, role))
         except (TelegramForbiddenError, TelegramBadRequest):
             await bot.send_message(chat_id,
-                f"⚠️ {game.players[uid]['name']} bot bilan shaxsiy chatni ochmagan. U botga /start yuborishi kerak.")
+                f"⚠️ {escape_html(game.players[uid]['name'])} bot bilan shaxsiy chatni ochmagan. U botga /start yuborishi kerak.")
 
 async def resolve_night(chat_id, game):
     required = set(game.role_ids("mafia") + game.role_ids("doctor") + game.role_ids("detective"))
@@ -70,7 +71,7 @@ async def resolve_night(chat_id, game):
     victim, _ = game.night_result()
     if victim:
         game.eliminate(victim)
-        await bot.send_message(chat_id, f"🌅 Tong otdi. Kechasi {game.players[victim]['name']} o‘yindan chiqdi.")
+        await bot.send_message(chat_id, f"🌅 Tong otdi. Kechasi {escape_html(game.players[victim]['name'])} o‘yindan chiqdi.")
     else:
         await bot.send_message(chat_id, "🌅 Tong otdi. Bu kecha hech kim o‘yindan chiqmadi.")
     winner = game.winner()
@@ -79,7 +80,7 @@ async def resolve_night(chat_id, game):
         return
     game.phase = "day"
     game.votes = {}
-    alive = "\n".join(f"• {game.players[uid]['name']}" for uid in game.alive_ids())
+    alive = "\n".join(f"• {escape_html(game.players[uid]['name'])}" for uid in game.alive_ids())
     await bot.send_message(chat_id,
         f"☀️ <b>KUNDUZGI MUHOKAMA</b>\nTirik o‘yinchilar:\n{alive}\n\nOvoz berish uchun tugmani bosing.",
         reply_markup=day_keyboard(game), parse_mode="HTML")
@@ -91,7 +92,7 @@ async def resolve_day(chat_id, game):
     if out:
         game.eliminate(out)
         await bot.send_message(chat_id,
-            f"🗳 Ovoz berish yakunlandi. {game.players[out]['name']} o‘yindan chiqarildi. Roli: {ROLE_NAMES[game.players[out]['role']]}.")
+            f"🗳 Ovoz berish yakunlandi. {escape_html(game.players[out]['name'])} o‘yindan chiqarildi. Roli: {ROLE_NAMES[game.players[out]['role']]}.")
     else:
         await bot.send_message(chat_id, "🗳 Ovozlar teng bo‘ldi. Hech kim chiqarilmadi.")
     winner = game.winner()
@@ -177,7 +178,7 @@ async def start_game(message: Message):
         try:
             await bot.send_message(uid, f"🎭 Sizning rolingiz: <b>{ROLE_NAMES[player['role']]}</b>", parse_mode="HTML")
         except (TelegramForbiddenError, TelegramBadRequest):
-            failed.append(player["name"])
+            failed.append(escape_html(player["name"]))
     if failed:
         games.pop(message.chat.id, None)
         await message.answer("Quyidagi o‘yinchilar botga shaxsiy /start yubormagan: " + ", ".join(failed) + ". Xona bekor qilindi; hamma /start yuborgach qayta urinib ko‘ring.")
@@ -232,7 +233,7 @@ async def profile(message: Message):
     level = xp // 100 + 1
     unlocked = [name for threshold, name, _ in ACHIEVEMENTS if games_count >= threshold]
     await message.answer(
-        f"👤 <b>{row['full_name']}</b>\n🎮 O‘yinlar: {games_count}\n🏆 G‘alabalar: {wins}\n"
+        f"👤 <b>{escape_html(row['full_name'])}</b>\n🎮 O‘yinlar: {games_count}\n🏆 G‘alabalar: {wins}\n"
         f"📉 Mag‘lubiyatlar: {losses}\n⭐ XP: {xp}\n🎖 Daraja: {level}\n\n"
         f"🏅 Yutuqlar: {', '.join(unlocked) if unlocked else 'Hozircha yo‘q'}",
         parse_mode="HTML")
@@ -243,7 +244,7 @@ async def top(message: Message):
     if not rows:
         await message.answer("Reyting hozircha bo‘sh.")
         return
-    lines = [f"{i}. {r['full_name']} — 🏆 {r['wins']} | ⭐ {r['xp']} XP" for i, r in enumerate(rows, 1)]
+    lines = [f"{i}. {escape_html(r['full_name'])} — 🏆 {r['wins']} | ⭐ {r['xp']} XP" for i, r in enumerate(rows, 1)]
     await message.answer("🏆 <b>TOP o‘yinchilar</b>\n" + "\n".join(lines), parse_mode="HTML")
 
 async def main():
