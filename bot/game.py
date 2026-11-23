@@ -76,10 +76,14 @@ class MafiaGame:
         ]
         if not mafia_votes:
             return None, None
-        victim = Counter(mafia_votes).most_common(1)[0][0]
+        counts = Counter(mafia_votes)
+        highest = max(counts.values())
+        leaders = [target for target, votes in counts.items() if votes == highest]
+        # A tied mafia vote must not eliminate an arbitrary player.
+        victim = leaders[0] if len(leaders) == 1 else None
         protected = next(
             (target for actor, target in self.night_actions.items()
              if self.players.get(actor, {}).get("role") == "doctor"),
             None,
         )
-        return (None, protected) if victim == protected else (victim, protected)
+        return (None, protected) if victim is None or victim == protected else (victim, protected)
