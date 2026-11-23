@@ -3,6 +3,8 @@ import random
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db import transaction
@@ -29,10 +31,17 @@ def register_view(request):
         elif User.objects.filter(username=username).exists():
             messages.error(request, "Bu login band.")
         else:
-            user = User.objects.create_user(username=username, password=password)
-            ensure_profile(user)
-            login(request, user)
-            return redirect("profile")
+            candidate = User(username=username)
+            try:
+                validate_password(password, user=candidate)
+            except ValidationError as exc:
+                for error in exc.messages:
+                    messages.error(request, error)
+            else:
+                user = User.objects.create_user(username=username, password=password)
+                ensure_profile(user)
+                login(request, user)
+                return redirect("profile")
     return render(request, "players/register.html")
 
 def login_view(request):
