@@ -46,6 +46,7 @@ def login_view(request):
     return render(request, "players/login.html")
 
 @login_required
+@require_POST
 def logout_view(request):
     logout(request)
     return redirect("home")
