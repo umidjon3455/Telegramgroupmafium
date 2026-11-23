@@ -84,6 +84,9 @@ def join_room(request, room_id):
 @login_required
 def room_detail(request, room_id):
     room = get_object_or_404(GameRoom.objects.prefetch_related("participants__user"), pk=room_id)
+    # Active games are private to their participants; outsiders must not inspect the room.
+    if room.status == "active" and not room.participants.filter(user=request.user).exists():
+        return HttpResponseForbidden("Faol o‘yinga faqat ishtirokchilar kira oladi.")
     if request.method == "POST" and request.POST.get("action") == "start":
         if room.host_id != request.user.id or room.status != "waiting":
             return HttpResponseForbidden("Faqat xona egasi kutish xonasini boshlashi mumkin.")
